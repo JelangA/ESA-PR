@@ -104,6 +104,18 @@ app.post('/api/loans/apply', async (req: Request, res: Response) => {
 // ==============================
 // AUDIT SERVICE (NO LB)
 // ==============================
+app.get('/api/audit', async (_req, res) => {
+  try {
+    const r = await axios.get(
+      `${AUDIT_URL}/audit`,
+      { timeout: 5000 }
+    );
+    res.json(r.data);
+  } catch (err: any) {
+    res.status(500).json({ error: String(err) });
+  }
+});
+
 app.get('/api/audit/:id', async (req, res) => {
   const id = req.params.id;
 
