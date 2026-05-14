@@ -24,25 +24,6 @@ async function startKafkaConsumer() {
 
 function startHttpServer() {
   const app = express();
-
-  // GET /audit — list semua applicationId yang punya log
-  app.get('/audit', (_req, res) => {
-    try {
-      if (!fs.existsSync(AUDIT_DIR)) {
-        return res.json({ total: 0, applications: [] });
-      }
-      const files = fs.readdirSync(AUDIT_DIR).filter(f => f.endsWith('.log'));
-      const applications = files.map(f => ({
-        applicationId: f.replace('.log', ''),
-        logFile: f,
-      }));
-      res.json({ total: applications.length, applications });
-    } catch (err) {
-      res.status(500).json({ error: String(err) });
-    }
-  });
-
-  // GET /audit/:id — ambil log satu applicationId
   app.get('/audit/:id', (req, res) => {
     const id = req.params.id;
     const file = path.join(AUDIT_DIR, `${id}.log`);
@@ -52,7 +33,6 @@ function startHttpServer() {
     const lines = fs.readFileSync(file, 'utf8').trim().split('\n').map(l => JSON.parse(l));
     res.json(lines);
   });
-
   app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'audit' }));
   const port = Number(process.env.AUDIT_HTTP_PORT || 3010);
   app.listen(port, () => console.log('Audit HTTP server listening on', port));

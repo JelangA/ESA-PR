@@ -6,10 +6,9 @@ import axios from 'axios';
 // ==============================
 // CONFIG
 // ==============================
-const LOAN_CORE_SERVERS = (
-  process.env.LOAN_CORE_SERVERS ||
-  'http://localhost:3001,http://localhost:3002'
-).split(',');
+const LOAN_CORE_HOST = process.env.LOAN_CORE_HOST || 'loan-core';
+const LOAN_CORE_PORT = process.env.LOAN_CORE_PORT || '3000';
+const LOAN_CORE_URL = `http://${LOAN_CORE_HOST}:${LOAN_CORE_PORT}`;
 
 const AUDIT_URL = process.env.AUDIT_URL || 'http://localhost:3010';
 const PORT = Number(process.env.PORT || 3000);
@@ -34,28 +33,13 @@ const log = (msg: string, meta?: any) => {
 };
 
 // ==============================
-// LOAD BALANCER (ROUND ROBIN)
-// ==============================
-let loanIndex = 0;
-
-function getLoanService() {
-  const url = LOAN_CORE_SERVERS[loanIndex];
-  loanIndex = (loanIndex + 1) % LOAN_CORE_SERVERS.length;
-  return url;
-}
-
-// ==============================
-// HEALTH CHECK (MULTI INSTANCE)
+// HEALTH CHECK
 // ==============================
 app.get('/health', async (_req, res) => {
   try {
-    const loanChecks = await Promise.all(
-      LOAN_CORE_SERVERS.map(url =>
-        axios.get(url + '/loans/health', { timeout: 2000 })
-          .then(r => ({ url, status: r.data }))
-          .catch(() => ({ url, status: 'down' }))
-      )
-    );
+    const loanCheck = await axios.get(LOAN_CORE_URL + '/loans/health', { timeout: 2000 })
+      .then(r => ({ url: LOAN_CORE_URL, status: r.data }))
+      .catch(() => ({ url: LOAN_CORE_URL, status: 'down' }));
 
     const audit = await axios
       .get(AUDIT_URL + '/health', { timeout: 2000 })
@@ -63,7 +47,7 @@ app.get('/health', async (_req, res) => {
 
     res.json({
       status: 'ok',
-      loanInstances: loanChecks,
+      loanInstance: loanCheck,
       audit: audit?.data || 'unavailable'
     });
 
@@ -73,11 +57,30 @@ app.get('/health', async (_req, res) => {
 });
 
 // ==============================
-// LOAN APPLY (WITH LOAD BALANCING)
+// METRICS (FOR AUTOSCALER)
+// ==============================
+let loanCoreRequests = 0;
+
+setInterval(() => {
+  // Reset counter setiap 10 detik
+  loanCoreRequests = 0;
+}, 10000);
+
+app.get('/metrics', (_req, res) => {
+  res.json({
+    loanCoreRequests10s: loanCoreRequests
+  });
+});
+
+// ==============================
+// LOAN APPLY (DELEGATED TO DOCKER DNS)
 // ==============================
 app.post('/api/loans/apply', async (req: Request, res: Response) => {
   const payload = req.body;
-  const target = getLoanService();
+  const target = LOAN_CORE_URL;
+  
+  // Track request
+  loanCoreRequests++;
 
   try {
     log('Forwarding loan request', { target });
@@ -104,18 +107,6 @@ app.post('/api/loans/apply', async (req: Request, res: Response) => {
 // ==============================
 // AUDIT SERVICE (NO LB)
 // ==============================
-app.get('/api/audit', async (_req, res) => {
-  try {
-    const r = await axios.get(
-      `${AUDIT_URL}/audit`,
-      { timeout: 5000 }
-    );
-    res.json(r.data);
-  } catch (err: any) {
-    res.status(500).json({ error: String(err) });
-  }
-});
-
 app.get('/api/audit/:id', async (req, res) => {
   const id = req.params.id;
 
@@ -142,7 +133,7 @@ app.get('/api/audit/:id', async (req, res) => {
 const server = app.listen(PORT, () => {
   log('API Gateway started', {
     port: PORT,
-    loanServices: LOAN_CORE_SERVERS,
+    loanService: LOAN_CORE_URL,
     auditService: AUDIT_URL
   });
 });
