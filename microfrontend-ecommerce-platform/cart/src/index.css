@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cart-specific styles */
+.cart-item {
+  @apply bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow;
+}
+
+.cart-item-image {
+  @apply w-20 h-20 object-cover rounded-md;
+}
+
+.quantity-control {
+  @apply flex items-center border border-gray-300 rounded-md;
+}
+
+.quantity-button {
+  @apply px-3 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors;
+}
+
+.quantity-input {
+  @apply w-12 text-center border-0 outline-none;
+}
+
+/* Checkout styles */
+.checkout-summary {
+  @apply bg-gray-50 rounded-lg p-6 sticky top-4;
+}
+
+.checkout-row {
+  @apply flex justify-between items-center py-2;
+}
+
+.checkout-total {
+  @apply text-lg font-bold text-gray-900 border-t border-gray-200 pt-4 mt-4;
+}
+
+/* Empty cart styles */
+.empty-cart {
+  @apply text-center py-12;
+}
+
+.empty-cart-icon {
+  @apply text-6xl text-gray-300 mb-4;
+}
+
+/* Animation */
+.cart-item-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.cart-item-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+.cart-item-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cart-item-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}

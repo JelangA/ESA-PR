@@ -1,0 +1,24 @@
+{
+  "name": "@microfrontend-ecommerce/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and types for microfrontend ecommerce",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.0",
+    "rimraf": "^5.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

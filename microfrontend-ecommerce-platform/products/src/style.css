@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Product-specific styles */
+.product-card {
+  @apply bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-200;
+}
+
+.product-card:hover {
+  @apply shadow-lg;
+}
+
+.product-image {
+  @apply w-full h-48 object-cover rounded-t-lg;
+}
+
+.product-title {
+  @apply text-lg font-semibold text-gray-900 line-clamp-2;
+}
+
+.product-price {
+  @apply text-xl font-bold text-primary-600;
+}
+
+.product-category {
+  @apply text-sm text-gray-500 uppercase tracking-wide;
+}
+
+.product-rating {
+  @apply flex items-center space-x-1 text-sm text-yellow-500;
+}
+
+/* Loading states */
+.skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+.skeleton-text {
+  @apply h-4 bg-gray-200 rounded;
+}
+
+.skeleton-title {
+  @apply h-6 bg-gray-200 rounded;
+}
+
+/* Utility classes */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

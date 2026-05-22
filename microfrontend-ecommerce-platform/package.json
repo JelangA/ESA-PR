@@ -1,0 +1,31 @@
+{
+  "name": "microfrontend-ecommerce",
+  "version": "1.0.0",
+  "description": "Mini ecommerce project with React and Vue.js microfrontends using Fake Store API",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm run install:container && npm run install:products && npm run install:cart && npm run install:auth && npm run install:shared",
+    "install:container": "cd container && npm install",
+    "install:products": "cd products && npm install", 
+    "install:cart": "cd cart && npm install",
+    "install:auth": "cd auth && npm install",
+    "install:shared": "cd shared && npm install",
+    "dev": "concurrently \"npm run dev:container\" \"npm run dev:products\" \"npm run dev:cart\" \"npm run dev:auth\"",
+    "dev:container": "cd container && npm run dev",
+    "dev:products": "cd products && npm run dev",
+    "dev:cart": "cd cart && npm run dev", 
+    "dev:auth": "cd auth && npm run dev",
+    "build:all": "npm run build:shared && npm run build:products && npm run build:cart && npm run build:auth && npm run build:container && node scripts/copy-builds.js",
+    "build:container": "cd container && npm run build",
+    "build:products": "cd products && npm run build",
+    "build:cart": "cd cart && npm run build",
+    "build:auth": "cd auth && npm run build",
+    "build:shared": "cd shared && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

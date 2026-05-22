@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build:all",
+  "outputDirectory": "dist",
+  "installCommand": "npm run install:all",
+  "rewrites": [
+    { "source": "/products", "destination": "/index.html" },
+    { "source": "/cart", "destination": "/index.html" },
+    { "source": "/auth", "destination": "/index.html" },
+    { "source": "/products/(.*)\\.js", "destination": "/products/$1.js" },
+    { "source": "/cart/(.*)\\.js", "destination": "/cart/$1.js" },
+    { "source": "/auth/(.*)\\.js", "destination": "/auth/$1.js" },
+    { "source": "/products/(.*)", "destination": "/index.html" },
+    { "source": "/cart/(.*)", "destination": "/index.html" },
+    { "source": "/auth/(.*)", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*\\.js)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
+}
